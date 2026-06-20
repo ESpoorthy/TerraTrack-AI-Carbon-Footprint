@@ -26,7 +26,7 @@ AI-powered carbon footprint awareness platform that helps users track emissions,
 ```bash
 cd ecotrack-app
 npm install
-cp .env.example .env   # Add your Gemini API key
+cp .env.example .env   
 npm run dev
 ```
 
