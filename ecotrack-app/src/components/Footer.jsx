@@ -4,7 +4,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-lg font-bold mb-4">🌍 EcoTrack AI</h3>
+            <h3 className="text-lg font-bold mb-4">🌍 TerraTrack</h3>
             <p className="text-gray-400 text-sm">
               Track, understand, and reduce your carbon footprint with AI-powered insights.
             </p>
@@ -30,7 +30,7 @@ function Footer() {
         </div>
         
         <div className="mt-8 pt-8 border-t border-gray-700 text-center text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} EcoTrack AI. All rights reserved. | Building a sustainable future together.</p>
+          <p>&copy; {new Date().getFullYear()} TerraTrack. All rights reserved. | Building a sustainable future together.</p>
         </div>
       </div>
     </footer>

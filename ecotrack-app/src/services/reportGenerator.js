@@ -32,7 +32,7 @@ export function calculateComparison(current, previous) {
 export function formatReportData(reportData) {
   const { carbonFootprint, ecoScore, recommendations, progressData, comparisonPeriod } = reportData;
   
-  let report = '=== ECOTRACK AI SUSTAINABILITY REPORT ===\n\n';
+  let report = '=== TERRATRACK SUSTAINABILITY REPORT ===\n\n';
   report += `Generated: ${reportData.generatedAt.toLocaleString()}\n\n`;
   
   // Carbon Footprint Summary
@@ -187,7 +187,7 @@ export async function generateReport(userId, carbonFootprint, ecoScore, progress
  * Download report as file
  */
 export function downloadReport(reportText, format = 'text') {
-  const filename = `ecotrack-report-${new Date().toISOString().split('T')[0]}.txt`;
+  const filename = `terratrack-report-${new Date().toISOString().split('T')[0]}.txt`;
   const blob = new Blob([reportText], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   
