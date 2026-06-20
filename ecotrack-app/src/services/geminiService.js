@@ -13,11 +13,12 @@ async function retryWithBackoff(apiCall, maxRetries = 3) {
     try {
       return await apiCall();
     } catch (error) {
-      if (attempt === maxRetries - 1) {
-        throw error;
-      }
-      // Exponential backoff: wait 2^attempt seconds
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+      const isLastAttempt = attempt === maxRetries - 1;
+      // Don't retry on missing API key — it won't help
+      if (error?.message?.includes('API key')) throw error;
+      if (isLastAttempt) throw error;
+      // Wait before retrying: 1s, 2s
+      await new Promise(resolve => setTimeout(resolve, (attempt + 1) * 1000));
     }
   }
 }
@@ -265,25 +266,33 @@ Vary the difficulty levels and categories.`;
  */
 export async function chatWithAI(messages, newMessage) {
   try {
-    // Build conversation context
-    const conversationHistory = messages
+    // Build conversation context (last 10 messages to keep prompt size reasonable)
+    const recentMessages = messages.slice(-10);
+    const conversationHistory = recentMessages
       .map(msg => `${msg.role}: ${msg.content}`)
       .join('\n');
     
-    const prompt = `You are a friendly sustainability advisor. Answer questions about environmental topics, carbon footprints, and eco-friendly practices. Keep responses concise and helpful.
+    const prompt = `You are a friendly sustainability advisor called TerraTrack AI. Answer questions about environmental topics, carbon footprints, and eco-friendly practices. Keep responses concise and helpful. If the user asks about something unrelated to sustainability or the environment, politely redirect them to sustainability topics.
 
 ${conversationHistory}
 user: ${newMessage}
 assistant:`;
 
+    // Use 15s timeout — Gemini can be slow on first request
     const responseText = await retryWithBackoff(
-      () => makeGeminiRequest(prompt, 5000),
+      () => makeGeminiRequest(prompt, 15000),
       3
     );
     
     return responseText.trim();
   } catch (error) {
-    console.error('Gemini chat error', error);
+    console.error('Gemini chat error:', error?.message || error);
+    if (error?.message?.includes('API key')) {
+      return 'The AI service is not configured. Please add a valid Gemini API key.';
+    }
+    if (error?.name === 'AbortError' || error?.message?.includes('abort')) {
+      return 'The response took too long. Please try again.';
+    }
     return 'I\'m temporarily unable to respond. Please try again in a moment.';
   }
 }
